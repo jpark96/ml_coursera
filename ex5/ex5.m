@@ -164,7 +164,7 @@ pause;
 %  lambda to see how the fit and learning curve change.
 %
 
-lambda = 0;
+lambda = 3;
 [theta] = trainLinearReg(X_poly, y, lambda);
 
 % Plot training data and fit
@@ -218,3 +218,10 @@ end
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
+%% =========== Part 9: Compute Test Set Error with Lambda =============
+%  Compute the test set error with the best lambda value found in the
+%  previous exercise.
+%
+[error_test] = testError(X_poly_test, ytest, theta);
+fprintf('Test error: %f\n', error_test);
