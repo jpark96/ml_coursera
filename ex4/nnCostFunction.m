@@ -62,15 +62,55 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+A1 = [ones(m, 1), X];
+Z2 = A1 * Theta1';
+A2 = [ones(m, 1), sigmoid(Z2)];
+Z3 = A2 * Theta2';
+A3 = sigmoid(Z3);
+h = A3;
 
+for i = 1:m
+    y_vector = zeros(num_labels, 1);
+    y_vector(y(i, 1)) = 1;
+    J = J + ...
+        (1/m) * sum(-y_vector .* log(h(i, :)') - (1 - y_vector) .* ...
+        log(1 - h(i, :)'));
+end
 
+reg_term = (lambda / (2 * m)) * (sum(sum(Theta1 .* Theta1)) + ...
+            sum(sum(Theta2 .* Theta2)));
+J = J + reg_term;
 
+%BackProp to get Theta1_grad and Theta2_grad
+for i = 1:m
+    %Forward Prop to fill As and Zs
+    A_1 = [1, X(i, :)];
+    Z_2 = A_1 * Theta1';
+    A_2 = [1, sigmoid(Z_2)];
+    Z_3 = A_2 * Theta2';
+    A_3 = sigmoid(Z_3);
+    p = A_3';
+    y_vector = zeros(num_labels, 1);
+    y_vector(y(i)) = 1;
+    
+    %Find deltas
+    d3 = p - y_vector;
+    d2 = d3' * Theta2(:, 2:end) .* sigmoidGradient(Z_2);
+    d2 = d2';
+    
+    Theta1_grad = Theta1_grad + d2 * A_1;
+    Theta2_grad = Theta2_grad + d3 * A_2;
+end
 
+Theta1_reg_term = (lambda/m) * ...
+                  [zeros(size(Theta1, 1), 1), Theta1(:, 2:end)];
+Theta2_reg_term = (lambda/m) * ...
+                  [zeros(size(Theta2, 1), 1), Theta2(:, 2:end)];
 
-
-
-
-
+Theta1_grad = (1/m) * Theta1_grad;
+Theta2_grad = (1/m) * Theta2_grad;
+    
+        
 
 
 
